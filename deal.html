@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DealRadar - Deal Details</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #0f172a; color: white; }
+
+    .navbar {
+      background: #1e293b;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #3b82f6;
+    }
+    .logo { font-size: 24px; font-weight: bold; color: #3b82f6; }
+    .nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 14px;
+    }
+    .nav-links a:hover { color: #3b82f6; }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .back-btn {
+      background: transparent;
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    /* Deal Header */
+    .deal-header {
+      background: #1e293b;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 1px solid #3b82f6;
+    }
+
+    .deal-badges {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .badge-score { background: #3b82f6; color: white; }
+    .badge-gov { background: #7c3aed; color: white; }
+    .badge-urgent { background: #ef4444; color: white; }
+
+    .deal-title {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .deal-value {
+      font-size: 36px;
+      color: #22c55e;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .deal-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .meta-item {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .meta-item p { color: #94a3b8; font-size: 12px; margin-bottom: 5px; }
+    .meta-item h4 { font-size: 16px; }
+
+    /* Timer */
+    .timer-card {
+      background: #ef444420;
+      border: 1px solid #ef4444;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .timer-card h3 { color: #ef4444; margin-bottom: 10px; }
+
+    .timer {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .time-unit {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 15px 25px;
+      text-align: center;
+    }
+
+    .time-unit h2 { font-size: 36px; color: #ef4444; }
+    .time-unit p { font-size: 12px; color: #94a3b8; }
+
+    /* Info Cards */
+    .info-card {
+      background: #1e293b;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+      border: 1px solid #334155;
+    }
+
+    .info-card h3 {
+      font-size: 18px;
+      color: #3b82f6;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #94a3b8; font-size: 14px; }
+    .info-value { font-size: 14px; font-weight: bold; }
+
+    /* Competitor */
+    .competitor-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+    }
+
+    .competitor-name { font-size: 14px; }
+    .competitor-status {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #ef444420;
+      color: #ef4444;
+    }
+
+    /* AI Analysis */
+    .ai-card {
+      background: linear-gradient(135deg, #1e40af20, #7c3aed20);
+      border: 1px solid #3b82f6;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+
+    .ai-card h3 { color: #3b82f6; margin-bottom: 15px; font-size: 18px; }
+
+    .ai-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    .score-bar {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+
+    .score-bar-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .score-bar-fill {
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill div {
+      height: 100%;
+      background: #3b82f6;
+      border-radius: 4px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 40px;
+    }
+
+    .btn-primary {
+      padding: 16px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-secondary {
+      padding: 16px;
+      background: transparent;
+      color: #3b82f6;
+      border: 2px solid #3b82f6;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-primary:hover { background: #2563eb; }
+
+    .success-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1e293b;
+      border: 2px solid #22c55e;
+      border-radius: 15px;
+      padding: 40px;
+      text-align: center;
+      z-index: 100;
+      width: 350px;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 99;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">🎯 DealRadar</div>
+    <div class="nav-links">
+      <a href="index.html">🏠 Dashboard</a>
+      <a href="profile.html">👤 Profile</a>
+      <a href="login.html">🚪 Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <button class="back-btn" onclick="window.location.href='index.html'">
+      ← Back to Dashboard
+    </button>
+
+    <!-- Deal Header -->
+    <div class="deal-header">
+      <div class="deal-badges">
+        <span class="badge badge-score">⭐ Match: 95/100</span>
+        <span class="badge badge-gov">🏛️ Government</span>
+        <span class="badge badge-urgent">🔥 Urgent</span>
+      </div>
+      <div class="deal-title">Construction Material Tender</div>
+      <div class="deal-value">₹25,00,000</div>
+
+      <div class="deal-meta">
+        <div class="meta-item">
+          <p>📍 Location</p>
+          <h4>Ahmedabad, Gujarat</h4>
+        </div>
+        <div class="meta-item">
+          <p>🏛️ Source</p>
+          <h4>GeM Portal</h4>
+        </div>
+        <div class="meta-item">
+          <p>📅 Posted</p>
+          <h4>Today, 9:00 AM</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer-card">
+      <h3>⏰ Golden Hour Alert — Deal Closing In:</h3>
+      <div class="timer">
+        <div class="time-unit">
+          <h2 id="hours">05</h2>
+          <p>Hours</p>
+        </div>
+        <div class="time-unit">
+          <h2 id="minutes">45</h2>
+          <p>Minutes</p>
+        </div>
+        <div class="time-unit">
+          <h2 id="seconds">30</h2>
+          <p>Seconds</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Analysis -->
+    <div class="ai-card">
+      <h3>🤖 AI Analysis</h3>
+
+      <div class="ai-point">✅ Your business profile perfectly matches this tender category</div>
+      <div class="ai-point">✅ You have successfully completed 3 similar deals before</div>
+      <div class="ai-point">✅ Deal value is within your preferred range</div>
+      <div class="ai-point">⚠️ 3 competitors are also viewing this deal — act fast!</div>
+      <div class="ai-point">💡 Best time to apply: Next 2 hours for maximum success</div>
+
+      <br>
+
+      <div class="score-bar">
+        <div class="score-bar-label">
+          <span>Profile Match</span><span style="color:#3b82f6">95%</span>
+        </div>
+        <div class="score-bar-fill"><div style="width:95%"></div></div>
+      </div>
+
+      <div class="score-bar">
+        <div class="score-bar-label">
+          <span>Past Experience Match</span><span style="color:#3b82f6">88%</span>
+        </div>
+        <div class="score-bar-fill"><div style="width:88%"></div></div>
+      </div>
+
+      <div class="score-bar">
+        <div class="score-bar-label">
+          <span>Location Match</span><span style="color:#3b82f6">100%</span>
+        </div>
+        <div class="score-bar-fill"><div style="width:100%"></div></div>
+      </div>
+
+      <div class="score-bar">
+        <div class="score-bar-label">
+          <span>Budget Match</span><span style="color:#3b82f6">90%</span>
+        </div>
+        <div class="score-bar-fill"><div style="width:90%"></div></div>
+      </div>
+    </div>
+
+    <!-- Deal Details -->
+    <div class="info-card">
+      <h3>📋 Deal Details</h3>
+      <div class="info-row">
+        <span class="info-label">Tender Number</span>
+        <span class="info-value">GEM/2026/B/4521897</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Category</span>
+        <span class="info-value">Construction Material</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Quantity</span>
+        <span class="info-value">500 MT Cement + Steel</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Delivery Location</span>
+        <span class="info-value">Ahmedabad Municipal Corp.</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Payment Terms</span>
+        <span class="info-value">30 days after delivery</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Last Date to Apply</span>
+        <span class="info-value" style="color:#ef4444">Today — 5:00 PM</span>
+      </div>
+    </div>
+
+    <!-- Competitors -->
+    <div class="info-card">
+      <h3>🕵️ Competitor Tracker</h3>
+      <div class="competitor-item">
+        <span class="competitor-name">🏢 Sharma Traders, Ahmedabad</span>
+        <span class="competitor-status">👀 Viewing Now</span>
+      </div>
+      <div class="competitor-item">
+        <span class="competitor-name">🏢 Gujarat Build Supplies</span>
+        <span class="competitor-status">👀 Viewing Now</span>
+      </div>
+      <div class="competitor-item">
+        <span class="competitor-name">🏢 Modi Construction Co.</span>
+        <span class="competitor-status">👀 Viewing Now</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="btn-primary" onclick="grabDeal()">
+        🎯 Grab This Deal Now!
+      </button>
+      <button class="btn-secondary" onclick="saveDeal()">
+        🔖 Save for Later
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Success Popup -->
+  <div class="overlay" id="overlay"></div>
+  <div class="success-popup" id="successPopup">
+    <div style="font-size:60px">🎉</div>
+    <h2 style="color:#22c55e; margin:15px 0">Deal Grabbed!</h2>
+    <p style="color:#94a3b8; margin-bottom:20px">
+      You applied before your competitors!<br>
+      Check your WhatsApp for next steps.
+    </p>
+    <button class="btn-primary" onclick="window.location.href='index.html'"
+      style="width:100%">
+      Back to Dashboard
+    </button>
+  </div>
+
+  <script>
+    // Countdown Timer
+    let totalSeconds = 5 * 3600 + 45 * 60 + 30;
+
+    function updateTimer() {
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+
+     
+      if (totalSeconds > 0) totalSeconds--;
+    }
+
+    setInterval(updateTimer, 1000);
+
+    function grabDeal() {
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('successPopup').style.display = 'block';
+    }
+
+    function saveDeal() {
+      alert('🔖 Deal saved! You can find it in your saved deals.');
+    }
+  </script>
+
+</body>
+</html>
